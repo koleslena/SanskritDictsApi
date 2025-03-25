@@ -1,0 +1,15 @@
+[Unit]
+Description=Sanskrit Dicts Api
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/environment
+ExecStart=./home/SanskritDictsApi/SanskritDictsApi
+ExecReload=./home/SanskritDictsApi/SanskritDictsApi
+WorkingDirectory=/home/SanskritDictsApi/
+KillMode=process
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
