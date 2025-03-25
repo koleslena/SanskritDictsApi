@@ -4,8 +4,8 @@ After=network.target
 
 [Service]
 EnvironmentFile=/etc/environment
-ExecStart=./home/SanskritDictsApi/SanskritDictsApi
-ExecReload=./home/SanskritDictsApi/SanskritDictsApi
+ExecStart=cd /home/SanskritDictsApi/ && .SanskritDictsApi
+ExecReload=cd /home/SanskritDictsApi/ && .SanskritDictsApi
 WorkingDirectory=/home/SanskritDictsApi/
 KillMode=process
 Restart=always
