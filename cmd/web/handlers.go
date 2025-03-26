@@ -40,6 +40,9 @@ func TransliterateHandler(w http.ResponseWriter, r *http.Request) {
 
 func SuggestHandler(w http.ResponseWriter, r *http.Request) {
 	dict := r.URL.Query().Get("dict")
+	if len(dict) == 0 {
+		dict = "mw"
+	}
 	dictSet, err := dicts.GetDict(dict)
 	if err != nil {
 		log.Println("Error initiation of dict ", err)
@@ -90,6 +93,9 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error get body ", err)
 	}
 	dict := r.URL.Query().Get("dict")
+	if len(dict) == 0 {
+		dict = "mw"
+	}
 	dictSet, err := dicts.GetDict(dict)
 	if err != nil {
 		log.Println("Error initiation of dict ", err)
@@ -134,6 +140,9 @@ func SearchListHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error get body ", err)
 	}
 	dict := r.URL.Query().Get("dict")
+	if len(dict) == 0 {
+		dict = "mw"
+	}
 	dictSet, err := dicts.GetDict(dict)
 	if err != nil {
 		log.Println("Error initiation of dict ", err)
