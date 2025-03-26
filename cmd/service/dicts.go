@@ -1,6 +1,9 @@
 package service
 
-import "log"
+import (
+	"log"
+	"strings"
+)
 
 type Dicts struct {
 	dictMap map[string]*DictSet
@@ -17,6 +20,7 @@ func NewDicts() *Dicts {
 }
 
 func (ds *Dicts) GetDict(dictName string) (*DictSet, error) {
+	dictName = strings.ToLower(strings.TrimSpace(dictName))
 	if dict, inMap := ds.dictMap[dictName]; inMap {
 		if dict.DictSuggestions != nil && dict.DictSearch != nil {
 			return dict, nil

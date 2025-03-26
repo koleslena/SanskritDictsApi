@@ -22,7 +22,7 @@ func main() {
 
 	log.Println("Запуск веб-сервера на http://127.0.0.1:4000")
 	handler := cors.AllowAll().Handler(mux)
-	err := http.ListenAndServe("127.0.0.1:4000", handler)
+	err := http.ListenAndServe(":4000", handler)
 	log.Fatal(err)
 }
 
