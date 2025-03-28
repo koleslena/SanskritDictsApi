@@ -1,5 +1,7 @@
 package consts
 
+const MW string = "mw"
+
 type Dictionary struct {
 	Name string
 	Desc string
