@@ -55,7 +55,7 @@ func SuggestHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(http.StatusCreated)
 		if len(term) != 0 {
-			if len(input) != 0 {
+			if len(input) != 0 && input != consts.SLP1 {
 				term = service.NewTransliteration(input, consts.SLP1).Transliterate(term)
 				suggestions, err := dictSet.DictSuggestions.GetSuggestions(term, maxSuggestions)
 				var result []Title
@@ -77,7 +77,7 @@ func SuggestHandler(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					log.Println("Error load suggestions ", err)
 				} else {
-					json.NewEncoder(w).Encode(suggestions)
+					json.NewEncoder(w).Encode(result)
 				}
 			}
 		} else {
