@@ -1,6 +1,7 @@
 package service
 
 import (
+	"SanskritDictsApi/cmd/consts"
 	"log"
 	"strings"
 )
@@ -35,6 +36,13 @@ func (ds *Dicts) GetDict(dictName string) (*DictSet, error) {
 }
 
 func createDict(dictName string) (*DictSet, error) {
+	if dictName == consts.AMARA {
+		var dict, err = NewAmaraDict(dictName)
+		if err != nil {
+			return &DictSet{}, err
+		}
+		return &DictSet{dict, dict}, nil
+	}
 	var dictSuggestions, initDictSuggestErr = NewDictSuggestions(dictName)
 	if initDictSuggestErr != nil {
 		return &DictSet{}, initDictSuggestErr

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"SanskritDictsApi/cmd/consts"
 	"SanskritDictsApi/utils"
 	"database/sql"
 	"fmt"
@@ -27,6 +28,10 @@ func NewDictSuggestions(dictName string) (*Dict, error) {
 
 func NewDict(dictName string) (*Dict, error) {
 	return newDict(utils.PathToSearch(dictName))
+}
+
+func NewAmaraDict(dictName string) (*Dict, error) {
+	return newDict(utils.PathToAmaraDB().String(), dictName)
 }
 
 func newDict(pathDictName string, dictName string) (*Dict, error) {
@@ -95,24 +100,46 @@ func (d *Dict) loadString(query string) ([]string, error) {
 	return data, nil
 }
 
+func (d *Dict) getQuery(dict_query string, amara_query string) string {
+	var query = dict_query
+	if d.dbName == consts.AMARA {
+		query = amara_query
+	}
+	return query
+}
+
+const amara_select_start = "SELECT w_word as key, w_id as lnum, w_synonyms || '*' || sh.sh_text_line1 || '**' || sh.sh_text_line2 || '***' || sh.sh_number as data from words m join shlokas sh on m.w_shloka_id = sh.sh_id "
+const amara_select_suggest_start = "SELECT w_word as key, w_id as lnum, '' as data from words m join shlokas sh on m.w_shloka_id = sh.sh_id "
+
 func (d *Dict) GetSuggestions(term string, limit int) ([]KeyData, error) {
-	return d.loadData(fmt.Sprintf("SELECT * from %s m where m.key like '%s%%' order by lnum LIMIT %d", d.dbName, term, limit))
+	dict_query := fmt.Sprintf("SELECT * from %s ", d.dbName) + "m where m.key like '%s%%' order by lnum LIMIT %d"
+	amara_query := amara_select_suggest_start + " where m.w_word like '%s%%' order by w_id LIMIT %d"
+	return d.loadData(fmt.Sprintf(d.getQuery(dict_query, amara_query), term, limit))
 }
 
 func (d *Dict) GetSuggestion(term string) ([]KeyData, error) {
-	return d.loadData(fmt.Sprintf("SELECT * from %s m where m.key like '%s' order by lnum LIMIT %d", d.dbName, term, 1))
+	dict_query := fmt.Sprintf("SELECT * from %s ", d.dbName) + "m where m.key like '%s' order by lnum LIMIT %d"
+	amara_query := amara_select_start + " where m.w_word like '%s' order by w_id LIMIT %d"
+	return d.loadData(fmt.Sprintf(d.getQuery(dict_query, amara_query), term, 1))
 }
 
 func (d *Dict) GetResult(nums string) ([]KeyData, error) {
-	return d.loadData(fmt.Sprintf("SELECT * from %s m where m.lnum in (%s)", d.dbName, nums))
+	dict_query := fmt.Sprintf("SELECT * from %s ", d.dbName) + "m where m.lnum in (%s)"
+	amara_query := amara_select_start + " where m.w_id in (%s)"
+	return d.loadData(fmt.Sprintf(d.getQuery(dict_query, amara_query), nums))
 }
 
 func (d *Dict) GetResultForNum(term string) ([]KeyData, error) {
-	return d.loadData(fmt.Sprintf("SELECT * from %s m where m.key like '%s' order by lnum LIMIT 1", d.dbName, term))
+	dict_query := fmt.Sprintf("SELECT * from %s ", d.dbName) + "m where m.key like '%s' order by lnum LIMIT 1"
+	amara_query := amara_select_start + " where m.w_word like '%s' order by w_id LIMIT 1"
+	return d.loadData(fmt.Sprintf(d.getQuery(dict_query, amara_query), term))
 }
 
 func (d *Dict) GetResultList(lnum float32, count float32) ([]string, error) {
-	sprintf := fmt.Sprintf("SELECT m.key from %s m where m.lnum >= %f and m.lnum <= %f group by m.key order by m.lnum ", d.dbName, lnum-count, lnum+count)
+	dict_query := fmt.Sprintf("SELECT m.key from %s ", d.dbName) + "m.lnum >= %f and m.lnum <= %f group by m.key order by m.lnum"
+	amara_query := "SELECT w_word as key from words m where m.w_id >= %f and m.w_id <= %f group by m.w_word order by m.w_id"
+
+	sprintf := fmt.Sprintf(d.getQuery(dict_query, amara_query), lnum-count, lnum+count)
 	return d.loadString(sprintf)
 }
 
