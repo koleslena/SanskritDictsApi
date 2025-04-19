@@ -117,7 +117,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		} else if len(term) != 0 {
 			if strings.ToLower(dict) != consts.MW {
-				result, err := dictSet.DictSuggestions.GetSuggestion(term)
+				result, err := dictSet.DictSuggestions.GetSearchResult(term)
 				if err != nil {
 					log.Println("Error load result ", err)
 				} else {

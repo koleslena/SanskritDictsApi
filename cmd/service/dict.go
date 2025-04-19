@@ -123,6 +123,12 @@ func (d *Dict) GetSuggestion(term string) ([]KeyData, error) {
 	return d.loadData(fmt.Sprintf(d.getQuery(dict_query, amara_query), term, 1))
 }
 
+func (d *Dict) GetSearchResult(term string) ([]KeyData, error) {
+	dict_query := fmt.Sprintf("SELECT * from %s ", d.dbName) + "m where m.key like '%s' order by lnum"
+	amara_query := amara_select_start + " where m.w_word like '%s' order by w_id"
+	return d.loadData(fmt.Sprintf(d.getQuery(dict_query, amara_query), term))
+}
+
 func (d *Dict) GetResult(nums string) ([]KeyData, error) {
 	dict_query := fmt.Sprintf("SELECT * from %s ", d.dbName) + "m where m.lnum in (%s)"
 	amara_query := amara_select_start + " where m.w_id in (%s)"
