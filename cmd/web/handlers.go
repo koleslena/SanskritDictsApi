@@ -8,7 +8,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"strings"
 )
 
 type Title struct {
@@ -116,25 +115,11 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 				json.NewEncoder(w).Encode(result)
 			}
 		} else if len(term) != 0 {
-			if strings.ToLower(dict) != consts.MW {
-				result, err := dictSet.DictSuggestions.GetSearchResult(term)
-				if err != nil {
-					log.Println("Error load result ", err)
-				} else {
-					json.NewEncoder(w).Encode(result)
-				}
+			result, err := dictSet.DictSearch.GetSearchResult(term)
+			if err != nil {
+				log.Println("Error load result ", err)
 			} else {
-				suggestion, err := dictSet.DictSuggestions.GetSuggestion(term)
-				if err != nil {
-					log.Println("Error load suggestion ", err)
-				} else if len(suggestion) == 1 {
-					result, err := dictSet.DictSearch.GetResult(utils.CleanData(suggestion[0].Data))
-					if err != nil {
-						log.Println("Error load result ", err)
-					} else {
-						json.NewEncoder(w).Encode(result)
-					}
-				}
+				json.NewEncoder(w).Encode(result)
 			}
 		} else {
 			json.NewEncoder(w).Encode([]service.KeyData{})

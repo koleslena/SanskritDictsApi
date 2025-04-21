@@ -23,7 +23,7 @@ func CleanData(data string) string {
 		if strings.Count(head, ".") > 0 {
 			for floatItem := start; floatItem <= end; {
 				if floatItem != math.Round(floatItem) {
-					sb = append(sb, fmt.Sprintf("%.1f", floatItem))
+					sb = append(sb, fmt.Sprintf("%.2f", floatItem))
 				} else {
 					sb = append(sb, fmt.Sprintf("%.1f", floatItem))
 				}
