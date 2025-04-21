@@ -15,8 +15,10 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/index", IndexHandler)
-	mux.HandleFunc("/api/getSuggest", SuggestHandler)
+	mux.HandleFunc("/api/dict/suggest", SuggestHandler)
 	mux.HandleFunc("/api/search", SearchHandler)
+	mux.HandleFunc("/api/shabda", ShabdaHandler)
+	mux.HandleFunc("/api/shabda/suggest", ShabdaSuggestionsHandler)
 	mux.HandleFunc("/api/list", SearchListHandler)
 	mux.HandleFunc("/api/transliterate", TransliterateHandler)
 

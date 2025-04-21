@@ -18,6 +18,7 @@ type Title struct {
 const maxSuggestions = 10
 
 var dicts = service.NewDicts()
+var shabda = service.NewShabdaService()
 
 var tpl = template.Must(template.ParseFiles("./ui/index.html"))
 
@@ -123,6 +124,49 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		} else {
 			json.NewEncoder(w).Encode([]service.KeyData{})
+		}
+	}
+}
+
+func ShabdaHandler(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var keyData service.KeyData
+	err := decoder.Decode(&keyData)
+	if err != nil {
+		log.Println("Error get body ", err)
+	}
+	term := r.URL.Query().Get("term")
+	linga := r.URL.Query().Get("linga")
+	log.Println("shabda term =>", term)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusCreated)
+	if shabda != nil && len(term) != 0 {
+		result, err := shabda.GetResult(term, linga)
+		if err != nil {
+			log.Println("Error load result ", err)
+		} else {
+			json.NewEncoder(w).Encode(result)
+		}
+	}
+}
+
+func ShabdaSuggestionsHandler(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var keyData service.KeyData
+	err := decoder.Decode(&keyData)
+	if err != nil {
+		log.Println("Error get body ", err)
+	}
+	term := r.URL.Query().Get("term")
+	log.Println("shabda term =>", term)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusCreated)
+	if shabda != nil && len(term) != 0 {
+		suggestions, err := shabda.GetResultSuggestions(term)
+		if err != nil {
+			log.Println("Error load suggestions ", err)
+		} else {
+			json.NewEncoder(w).Encode(suggestions)
 		}
 	}
 }

@@ -7,6 +7,8 @@ const pathToDB = "./data/"
 const keysFile string = "keys"
 const dictFile string = ".sqlite"
 const amaraDB string = "amara.db"
+const shabdaDB string = "shabda.db"
+const shabda string = "shabda"
 
 func PathToSuggestions(dictName string) (string, string) {
 	sb := PathToDB(dictName)
@@ -17,6 +19,13 @@ func PathToSuggestions(dictName string) (string, string) {
 	}
 	sb.WriteString(dictFile)
 	return sb.String(), dictName
+}
+
+func PathToShabda() (string, string) {
+	var sb = strings.Builder{}
+	sb.WriteString(pathToDB)
+	sb.WriteString(shabdaDB)
+	return sb.String(), shabda
 }
 
 func PathToSearch(dictName string) (string, string) {
