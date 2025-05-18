@@ -108,7 +108,7 @@ func (d *Dict) getQuery(dict_query string, amara_query string) string {
 	return query
 }
 
-const amara_select_start = "SELECT w_word as key, w_id as lnum, w_synonyms || '*' || sh.sh_text_line1 || '**' || sh.sh_text_line2 || '***' || sh.sh_number as data from words m join shlokas sh on m.w_shloka_id = sh.sh_id "
+const amara_select_start = "SELECT w_word as key, w_id as lnum, w_artha || '*' || w_synonyms || '*' || sh.sh_text_line1 || '**' || sh.sh_text_line2 || '***' || sh.sh_number as data from words m join shlokas sh on m.w_shloka_id = sh.sh_id "
 const amara_select_suggest_start = "SELECT w_word as key, w_id as lnum, '' as data from words m join shlokas sh on m.w_shloka_id = sh.sh_id "
 
 func (d *Dict) GetSuggestions(term string, limit int) ([]KeyData, error) {
